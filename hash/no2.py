@@ -7,22 +7,20 @@ def solution(phone_book):
 
     pSize = len(phone_book)
     for i in range(pSize):
+        listStdPh = list(phone_book[i])
+        ppSize = len(listStdPh)
         for j in range(pSize):
             if i == j:
                 continue
-
-            listStdPh = list(phone_book[i])
+      
             listComPh = list(phone_book[j])
-                        
-            ppSize = len(listStdPh)
             pppSize = len(listComPh)
+            
             if ppSize > pppSize:
                 continue
 
-
             if listComPh[0:ppSize] == listStdPh:
-                answer = False
-                return answer    
+                return False  
     
     return answer
 
