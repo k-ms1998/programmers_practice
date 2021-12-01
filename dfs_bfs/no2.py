@@ -12,6 +12,7 @@ def dfs(v, node, computers, c):
             c.append(i)
             v[i] = 1
             dfs(v, computers[i], computers, c)
+    
     return c
 def solution(n, computers):
     answer = 0
@@ -19,11 +20,10 @@ def solution(n, computers):
     v = [0]*n
     c = []
     for i in range(n):
-        c.append(dfs(v, computers[i], computers, []))
-    
-    for cc in c:
-        if len(cc) >= 1:
-            answer += 1
+        tmpC = dfs(v, computers[i], computers, [])
+        if len(tmpC) > 0:
+            c.append(tmpC)
+    answer = len(c)
 
     return answer
 
