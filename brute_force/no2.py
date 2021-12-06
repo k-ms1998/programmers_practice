@@ -7,6 +7,7 @@ from itertools import permutations
 import math
 
 def checkPrimeC(nums):
+    #에라토스테네스의 체
     size = max(nums)+1
 
     arr = [0 for _ in range(size)]
@@ -34,6 +35,7 @@ def checkPrimeC(nums):
 
 
 def checkPrimeB(n):
+    #제곱근
     if n <= 1:
         return 0
     for i in range(2, int(math.sqrt(n))+1):
