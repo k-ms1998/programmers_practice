@@ -6,47 +6,36 @@ public class no1 {
 	static int k = 7;
 
 	public static void main(String[] args) {
-//		¼¯Àº À½½ÄÀÇ ½ºÄÚºô Áö¼ö = °¡Àå ¸ÊÁö ¾ÊÀº À½½ÄÀÇ ½ºÄÚºô Áö¼ö + (µÎ ¹øÂ°·Î ¸ÊÁö ¾ÊÀº À½½ÄÀÇ ½ºÄÚºô Áö¼ö * 2)
+//		ì„ì€ ìŒì‹ì˜ ìŠ¤ì½”ë¹Œ ì§€ìˆ˜ = ê°€ì¥ ë§µì§€ ì•Šì€ ìŒì‹ì˜ ìŠ¤ì½”ë¹Œ ì§€ìˆ˜ + (ë‘ ë²ˆì§¸ë¡œ ë§µì§€ ì•Šì€ ìŒì‹ì˜ ìŠ¤ì½”ë¹Œ ì§€ìˆ˜ * 2)
 		System.out.println((new Solution()).solution(scoville, k));
 	}
 
 	public static class Solution {
-		public int solution(int[] scoville, int k) {
-			List<Integer> newScoville = new ArrayList<>();
+		public int solution(int[] scoville, int K) {
+			PriorityQueue<Integer> newScoville = new PriorityQueue<>();
 			for(int s: scoville) {
 				newScoville.add(s);
 			}
-			Collections.sort(newScoville);
 			
-			return mySolution(newScoville, k, 0);
+			return mySolution(newScoville, K, 0);
 		}
 
-		public int mySolution(List scoville, int k, int cnt) {
-			if ((int)scoville.get(0) > k) {
+		public int mySolution(PriorityQueue scoville, int K, int cnt) {
+			if ((int)scoville.peek() >= K) {
 				return cnt;
 			}
 			else if(scoville.size() < 2) {
 				return -1;
 			}
 
-			int idx1 = (int)scoville.remove(0);
-			int idx2 = (int)scoville.remove(0);
+			int idx1 = (int)scoville.poll();
+			int idx2 = (int)scoville.poll();
 			int mixed = idx1+2*idx2;
 			
-			int pos = 0;
-			Iterator scovilleIter = scoville.iterator();
-			while(scovilleIter.hasNext()) {
-				int cmp = (int)scovilleIter.next();
-				if(mixed < cmp) {
-					break;
-				}
-				pos++;
-			}
-			scoville.add(pos, mixed);
-	
+			scoville.add(mixed);
 //			scoville.forEach(e -> System.out.println(e));
 			
-			return mySolution(scoville, k, cnt + 1);
+			return mySolution(scoville, K, cnt + 1);
 		}
 	}
 }
