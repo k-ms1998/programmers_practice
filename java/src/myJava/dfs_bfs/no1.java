@@ -2,6 +2,7 @@ package myJava.dfs_bfs;
 
 import java.util.*;
 
+//Å¸°Ù ³Ñ¹ö (Level 2)
 public class no1 {
 	static int []numbers = {1, 1, 1, 1, 1};
 	static int target = 3;
@@ -26,6 +27,7 @@ public class no1 {
 		while(numIter.hasNext()) {
 			myNum.add((Integer) numIter.next());
 		}
+//		Must deep copy list
 
 		if(numbers.size() > 0) {
 			int n = (int)myNum.remove(0);
