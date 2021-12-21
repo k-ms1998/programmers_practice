@@ -68,20 +68,23 @@ public class no2 {
 			for (int i = 0; i < dir.length - 1; i++) {
 				k += (dir[i] + "/");
 			}
-			
-			String v = dir[dir.length-1];
-			System.out.println((k+v+"/") + ":" + myDir.containsKey(k+v+"/"));
+
+			String v = dir[dir.length - 1];
+			System.out.println((k + v + "/") + ":" + myDir.containsKey(k + v + "/"));
 			if (myDir.containsKey(k + v + "/")) {
 				myDir.remove(k + v + "/");
 			}
 			myDir.get(k).remove(v);
 
 		}
+		public void cpDir(HashMap<String, ArrayList<String>> myDir, String cmd) {
+			System.out.println(cmd);
 
+		}
 		public String[] solution(String[] directory, String[] command) {
-//			mkdir => Æ¶Á¤ À§Ä¡¿¡ µð·ºÅä¸®¸¦ »ý¼º
-//			rm => Æ¯Á¤ µð·ºÅä¸®¸¦ »èÁ¦. »èÁ¦ÇÑ µð·ºÅä¸®ÀÇ ÇÏÀ§ µð·ºÅä¸®µé ¸ðµÎ »èÁ¦.
-//			cp => source µð·ºÅä¸®¸¦ dest·Î º¹»ç. source µð·ºÅä¸®µé ¶ÇÇÑ ÇÔ²² »èÁ¦.(cp source dest)
+//			mkdir => Æ¶ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//			rm => Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+//			cp => source ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ destï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. source ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½.(cp source dest)
 			String[] answer = {};
 
 			HashMap<String, ArrayList<String>> myDir = new HashMap<>();
@@ -93,13 +96,15 @@ public class no2 {
 					mkDir(myDir, cmd[1]);
 				} else if (cmd[0].equals("rm")) {
 					rmDir(myDir, cmd[1]);
+				} else if (cmd[0].equals("cp")) {
+					cpDir(myDir, cmd[1]);
 				}
 			}
 
 			myDir.forEach((k, v) -> {
 				Iterator iter = myDir.get(k).iterator();
 				while (iter.hasNext()) {
-					System.out.println(k +"+" +iter.next());
+					System.out.println(k + "+" + iter.next());
 				}
 
 			});
