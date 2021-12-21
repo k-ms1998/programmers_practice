@@ -30,7 +30,6 @@ public class no2 {
 				if (visited[i] == 0) {
 					answer++;
 					mySolution(n, computers, i, visited);
-					//dfs until a node can't be reached
 				}
 			}
 
