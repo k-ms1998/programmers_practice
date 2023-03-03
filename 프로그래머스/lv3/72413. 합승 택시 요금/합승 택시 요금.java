@@ -1,12 +1,16 @@
-import java.util.*;
-
+/*
+Floyd-Warshall
+1. 각 노드간의 최단거리를 알고 있어야 하기 때문에 floyd로 찾아줌 (3 <= n <= 200 , 27 <= n^3 <= 8,000,000)
+2. 이때, 같이 합승을 하다가 중간에 각자 갈 수 있는 것이 중요 => (s->i) + (i->a) + (i->b)
+    처음부터 끝까지 같이 하는게 제일 적은 비용이 들수도 있음 => (s->a) + (a->b) OR (s->b) + (b->a)
+    처음부터 각자 따로 가는게 더 제일 적은 비용이 들수도 있음 => (s->a) + (s->b)
+*/
 class Solution {
     
     static int[][] dist;
     static final int INF = 100000000;
     
     public int solution(int n, int s, int a, int b, int[][] fares) {
-        int answer = INF;
         dist = new int[n + 1][n + 1];
         for(int i = 1; i < n + 1; i++){
             for(int j = 1; j < n + 1; j++){
@@ -24,6 +28,7 @@ class Solution {
         }
         floyd(n);
         
+        int answer = INF;
         answer = Math.min(dist[s][a] + dist[s][b], Math.min(dist[s][a] + dist[a][b], dist[s][b] + dist[b][a]));
         for(int i = 1; i < n + 1; i++){
             if(i == s || dist[s][i] >= INF){
