@@ -1,5 +1,9 @@
 import java.util.*;
 
+/**
+Solution: DP
+dist[x][y][d] -> (x, y) 좌표에서 d 방향을 보고 있을때 최단 거리
+*/
 class Solution {
     
     static int n;
@@ -20,12 +24,7 @@ class Solution {
             }
         }
         
-        PriorityQueue<Point> queue = new PriorityQueue<>(new Comparator<Point>(){
-            @Override
-            public int compare(Point p1, Point p2){
-                return p1.d - p2.d;
-            }
-        });
+        Deque<Point> queue = new ArrayDeque<>();
         queue.offer(new Point(0, 0, 0, 0));
         queue.offer(new Point(0, 0, 0, 1));
         queue.offer(new Point(0, 0, 0, 2));
@@ -52,6 +51,11 @@ class Solution {
                 if(board[ny][nx] == 1){
                     continue;
                 }
+                /*
+                현재 보는 방향(dir)이랑 다음으로 움직일 칸이 방형의 변화가 있는지 없는지 확인
+                방향이 같으면 d + 100
+                방향이 다르면 d + 600 (Because, 해당 칸으로 방향으로 바꾸는데 비용 500 + 실제로 한칸을 움직이는데 드는 비용 100)
+                */
                 int tmpCost = dir % 2 == i % 2 ? d + 100 : d + 600;
                 if(tmpCost < dist[ny][nx][i]){
                     dist[ny][nx][i] = tmpCost;
