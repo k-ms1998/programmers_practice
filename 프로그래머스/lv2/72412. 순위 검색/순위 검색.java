@@ -1,5 +1,15 @@
 import java.util.*;
 
+/**
+1. 항목의 조합을 key로 설정, value는 점수
+ex) java,backend,junior,chicken,150을 입력 받으면 -> (javabackendjuniorchicken, 150)
+이때, 각 항목에 대해서 고려하지 않는 경우에도 150점을 반환해줘야함
+    -> (-, backend, junior, chicken), (-, -, junior, chicken), (java, -, junior, chicken) 등등 도 모두 150점 반환
+    -> 해당 값들을 key로 해서 (key, 150) 저장 해줌
+    
+2. query문 추출해서, 추출한 쿼리문이 key 가 됨 -> 해당 key에 저장된 모든 점수들을 가져와서, 목표 점수를 넘는 개수 확인
+3. 시간 단축을 위해, 데이터를 입력 받고, 정렬해줌. 2에서 점수를 찾을때, 이분 탐색으로 찾아줌
+*/
 class Solution {
     
     static int n;
@@ -66,6 +76,8 @@ class Solution {
                         right = mid - 1;
                     }
                 }
+                
+                // left는 목표 점수(score) 보다 크거나 같은 값의 최초 위치 -> left보다 오른쪽에 있는 값들은 모두 score보다 크거나 같음 -> 그러므로 해당 값들의 개수는 size - left
                 cnt = size - left;
             }
 
