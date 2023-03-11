@@ -1,5 +1,13 @@
 import java.util.*;
 
+/**
+1. 루트 노드를 찾는다 (y좌표가 가장 큰 노드)
+2. 입력 받은 노드들을 x좌표 순으로 정렬 -> 트리를 중위 순회한 결과가 나옴
+3. 정렬한 노드들에서 루트 노드의 위치를 찾는다 -> 루트노드 기준 배열의 왼쪽에 있는 값들은 루트 노드 기준 왼쪽 서브 트리, 오른쪽은 오른쪽 서브트리
+4. 각 서브트리로 이동해서, 1~3 반복 -> 루트 노드에 도착할때까지 서브트리로 이동
+5. 현재 노드 출력 -> 왼쪽 서브트리 방문 -> 오른쪽 서브트리 방문 => 전위 순회
+   왼쪽 서브트리 방문 -> 오른쪽 서브트리 방문 -> 현재 노드 출력 => 전위 순회
+*/
 class Solution {
     
     static int n;
@@ -7,8 +15,9 @@ class Solution {
     static Node root;
     static Node[] preOrder;
     static Node[] postOrder;
-    static Deque<Integer> tmpPreOrder = new ArrayDeque<>();
-    static Deque<Integer> tmpPostOrder = new ArrayDeque<>();
+    static int preOrderIdx = -1;
+    static int postOrderIdx = -1;
+    static int[][] answer;
 
     static final int INF = 100001;
     
@@ -45,15 +54,10 @@ class Solution {
                 break;
             }
         }
-        
+                
+        answer = new int[2][n];
         createPreOrder(rootPos, root, inOrder);
         createPostOrder(rootPos, root, inOrder);
-        
-        int[][] answer = new int[2][n];
-        for(int i = 0; i < n; i++){
-            answer[0][i] = tmpPreOrder.pop();
-            answer[1][i] = tmpPostOrder.pop();
-        }
 
         return answer;
     }
@@ -89,8 +93,9 @@ class Solution {
                 }
             }
         }
-                
-        tmpPreOrder.offer(root.idx);
+                        
+        preOrderIdx++;
+        answer[0][preOrderIdx] = root.idx;
         createPreOrder(leftRootPos, leftRoot, leftTree); 
         createPreOrder(rightRootPos, rightRoot, rightTree);
     }
@@ -129,7 +134,8 @@ class Solution {
         
         createPostOrder(leftRootPos, leftRoot, leftTree); 
         createPostOrder(rightRootPos, rightRoot, rightTree);
-        tmpPostOrder.offer(root.idx);
+        postOrderIdx++;
+        answer[1][postOrderIdx] = root.idx;
     }
 
     public static class Node{
