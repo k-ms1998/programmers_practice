@@ -29,12 +29,14 @@ class Solution {
                     return i1.idx - i2.idx;
                 }
                 
+                // double -> int로 형 변환해서 반환하면 오류 발생 => i2Rate, i1Rate를 비교해서 적절한 값 출력
+                // i1Rate = i1의 실패율, i2Rate = i2의 실패율
+                // 실패율이 더 큰건 반환 -> i2Rate - i1Rate -> i2Rate > i1Rate 이면 1 반환
                 return i2Rate > i1Rate ? 1 : i2Rate == i1Rate ? 0 : -1;
             }
         });
         
         for(int i = 1; i < N + 1; i++){
-            // System.out.println("cnt = " + cnt[i] + ", attempts = " + attempts[i] + ", rate = " + ((1.0)*cnt[i]/attempts[i]));
             queue.offer(new Info(i, cnt[i], attempts[i]));
         }
         
