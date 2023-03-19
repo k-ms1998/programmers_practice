@@ -9,6 +9,8 @@ class Solution {
     public int[] solution(String[][] places) {
         int[] answer = new int[5];
         
+        // 5개의 5x5 강의실
+        // 각 강의실 확인
         for(int i = 0; i < 5; i++){
             int grid[][] = new int[5][5];
             int dist[][] = new int[5][5];
@@ -28,6 +30,10 @@ class Solution {
                 }
             }  
             
+            // interviewee == 면접자들의 위치
+            // 각 면접자로부터 출발해서, 다른 면접자까지의 위치 계산
+            // BFS로 풀이; 파티션(-1)이 있으면, 넘어가지 못하는 벽처럼 생각해서 skip
+            // 시작지점으로부터 현재 위치가 3이상이면 거리두기 조건을 만족하기 때문에 더 이상 탐색 X
             boolean compliant = true;
             for(Point p: interviewee){
                 int sx = p.x;
@@ -65,11 +71,10 @@ class Solution {
                         }else if(grid[ny][nx] == 0){
                             queue.offer(new Point(nx, ny, curD));
                         }else{
+                            // 현재거리가 2이하인데, 다른 면접자랑 만나면 거리두기 조건 만족 X -> break
                             if(curD <= 2){
                                 compliant = false;
                                 break;
-                            }else{
-                                queue.offer(new Point(nx, ny, curD));
                             }
                         }
                     }
@@ -84,7 +89,6 @@ class Solution {
             }
         }
         
-
         return answer;
     }
     
