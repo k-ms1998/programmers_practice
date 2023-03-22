@@ -1,5 +1,18 @@
 import java.util.*;
 
+/**
+조합론(Combination)
+1. 각 주문에 대해서, 만들수 있는 모든 조합 확인
+    -> 최소 2개의 메뉴를 선택해야함
+        -> 그러므로, 길이가 2이상, orders[i]의 길이 이하인 모든 조합 찾기
+        -> 각 유니크한 조합을 찾기 위해 HashSet에 넣기
+2. 각 order[i]에 대해서 생성된 HashSet을 탐색하면사, count 업데이트
+    -> count는 (k, v)로 각 조합을 만들 수 있는 횟수 저장
+3. count의 모든 key에 대해서, byCourseLength에 저장
+    -> byCouseLength는 조합의 길이에 대해서, 해당 길이에 해당하는 조합과 갯수(Info) 저장
+        -> ex: byCourseLength[2] => 길이가 2인 조합들 저장
+4. 조건에 맞게 정답 구하기
+*/
 class Solution {
     
     static HashMap<String, Integer> count = new HashMap<>();
@@ -64,7 +77,6 @@ class Solution {
             }
         }
         Collections.sort(ansList);
-        // System.out.println(ansList);
         
         String[] answer = new String[ansList.size()];
         for(int i = 0; i < ansList.size(); i++){
