@@ -14,7 +14,7 @@ class Solution {
         각 길이마다 문자열 s를 나눠서 탐색
         => O(n ^ 2)
         */
-        for(int i = 1; i < n; i++){
+        for(int i = 1; i <= n / 2; i++){ // 서브스트링이 문자열 s의 길이의 반보다 커지면, 어차피 문자열 압축이 불가능해짐
             String compressed = ""; // 압축된 문자열
             
             String subStr = ""; // 연속되는 서브스트링
