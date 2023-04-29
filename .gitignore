@@ -2,3 +2,8 @@
 qcell_Q.docx
 java/src/myJava/qcell/no2.java
 java/bin/myJava/qcell/no2.class
+java/.idea/
+
+*.xml
+
+프로그래머스/Summer_Coding_2023/.idea/
