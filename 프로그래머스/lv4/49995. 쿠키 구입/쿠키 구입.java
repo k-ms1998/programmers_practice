@@ -1,50 +1,61 @@
+/**
+Solution: 누적합 +  TwoPointer
+1. 바구니들의 누적합 구하기
+    -> total[3] = cookie[0] + cookie[1] + cookie[2] = total[2] + cookie[2]
+        total[2] = cookie[0] + cookie[1]
+        total[1] = cookie[0]
+    -> 2번 바구니부터 4번 바구니까지의 합 = cookie[1] + cookie[2] + cookie[3]
+                                    = total[4] - total[1]
+                                    = (cookie[0] + cookie[1] + cookie[2] + cookie[3]) - (cookie[0])
+2. i ~ m의 합과 m+1 ~ r의 합을 구해야함
+    -> i은 1부터 시작, r은 n부터 시작
+        -> 투포인터를 통해서 m 구하기
+            -> 매번 투포인터로 m을 구한후, i~m의 합과 m+1~r의 합을 구해서 같은지 확인
+            -> 같으면, answer를 업데이트하고 break
+3. 현재 i~r의 합이 2*answer보다 작으면 건너뛰기
+    -> i~r의 합을 full이라고 했을때, 문제의 조건을 만족시키기 위해서는 i~m == m+1~r == full/2
+    -> 이때, full/2의 값이 answer보다 작거나 같으면, 최대로 담을 수 있는 쿠키의 수가 answer보다 커질 수 없음
+        -> 그러므로, full <= 2*answer 이면 건너뛰기
+*/
 class Solution {
     
     static int n;
-    static int[] tree;
-    static int[][] dp;
+    static int[] total;
     
     public int solution(int[] cookie) {
         int answer = 0;
         
         n = cookie.length;
-        tree = new int[4*n];
-        dp = new int[n][n];
-        createTree(1, 0, n - 1, cookie);
-       
-
-        for(int i = 0; i < n - 1; i++){
-            boolean found = false;
-            for(int r = n - 1; r >= 0; r--){
-                if(i >= r || found){
+        total = new int[n + 1];
+        for(int i = 1; i < n + 1; i++){
+            total[i] = total[i-1] + cookie[i-1];
+        }
+              
+        for(int i = 1; i < n + 1; i++){
+            for(int r = n; r >= 1; r--){
+                if(i >= r){
                     break;
                 }
-                if(dp[i][r] == 0){
-                    dp[i][r] = findSum(1, 0, n - 1, i, r);
+                
+                int full = total[r] - total[i-1];
+                if(full <= 2*answer){ // full <= 2*answer 이면 현재 answer 보다 더 많은 양의 쿠기를 담는 것이 불가능
+                    break;
                 }
                 
+                // 투 포인터로 현재 i,r의 값에 대해서 m의 위치 찾아주기
                 int left = i;
                 int right = r;
-                if(dp[left][right] <= 2*answer){
-                    break;
-                }
-                
                 while(left <= right){
                     int m = (left + right) / 2;
                     if(m < i || m + 1 > r){
                         break;
                     }
-                    if(dp[i][m] == 0){
-                        dp[i][m] = findSum(1, 0, n - 1, i, m);
-                    }
-                    dp[m + 1][r] = dp[i][r] - dp[i][m];
                     
-                    int sumA = dp[i][m];
-                    int sumB = dp[m + 1][r];
-                    dp[i][r] = sumA + sumB;
+                    int sumA = total[m] - total[i - 1];
+                    int sumB = total[r] - total[(m + 1) - 1];
+                    
                     if(sumA == sumB){
                         answer = Math.max(answer, sumA);
-                        found = true;
                         break;
                     }else if(sumA < sumB){
                         left = m + 1;
@@ -58,37 +69,5 @@ class Solution {
         return answer;
     }
 
-    public static int createTree(int idx, int left, int right, int[] cookie){
-        if(left == right){
-            tree[idx] = cookie[left];
-            return tree[idx];
-        }
-        
-        int mid = (left + right) / 2;
-        tree[idx] = createTree(2*idx, left, mid, cookie) + createTree(2*idx + 1, mid + 1, right, cookie);
-        dp[left][right] = tree[idx];
-        
-        return tree[idx];
-    }
     
-    public static int findSum(int idx, int left, int right, int targetL, int targetR){
-        if(left < targetL && right < targetL){
-            return 0;
-        }
-        if(left > targetR && right > targetR){
-            return 0;
-        }
-        if(left >= targetL && left <= targetR && right >= targetL && right <= targetR){
-            return tree[idx];
-        }
-        if(left == right){
-            return tree[idx];
-        }
-        
-        int mid = (left + right) / 2;       
-        int sumA = findSum(2*idx, left, mid, targetL, targetR);
-        int sumB = findSum(2*idx + 1, mid + 1, right, targetL, targetR);
-        
-        return sumA + sumB; 
-    }
 }
