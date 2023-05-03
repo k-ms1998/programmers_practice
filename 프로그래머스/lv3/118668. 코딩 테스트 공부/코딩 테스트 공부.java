@@ -36,9 +36,11 @@ class Solution {
             maxCop = Math.max(maxCop, problems[i][1]);
         }
 
-        dp = new int[151][151]; // 알고려과 코딩력은 최대 150까지 되기 때문에 배열을 [150][150]으로 선언
-        for(int i = 0; i < 151; i++){
-            for(int j = 0; j < 151; j++){
+        int initAlp = Math.max(alp, maxAlp); // 초기의 알고력이 문제에서 필요한 최대의 알고력보다 클 수 있음
+        int initCop = Math.max(cop, maxCop); // 초기의 코딩력이 문제에서 필요한 최대의 코딩력보다 클 수 있음
+        dp = new int[initAlp + 1][initCop + 1]; 
+        for(int i = 0; i <= initAlp; i++){
+            for(int j = 0; j <= initCop; j++){
                 dp[i][j] = INF;
             }
         }
