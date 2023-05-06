@@ -1,5 +1,12 @@
 import java.util.*;
 
+/**
+Solution: Trie(트라이 알고리즘)
+1. 단어가 주어졌을때, 해당 단어에 대해서 Trie 생성(trie)
+-> queries에서 '?'가 뒤에(접미사) 있을때 해당 Trie 탐색
+2. 단어가 주어졌을때, 해당 단어를 reverse한 Trie 생성(reverseTrie)
+-> queries에서 '?'가 앞에(접두사) 있을때 해당 Trie 탐색
+*/
 class Solution {
     
     static int n;
@@ -76,36 +83,6 @@ class Solution {
         }
        
         return 0;
-//         if(depth >= target){
-//             return 0;
-//         }
-        
-//         char c = query.charAt(depth);
-//         int curNum = c - 'a';
-
-//         Node[] child = node.child;
-//         boolean[] visited = node.visited;
-
-//         if(c == '?'){
-//             int cnt = 0;
-//             for(int i = 0; i < 27; i++){
-//                 if(visited[i]){
-//                     cnt += findNodeSuffix(depth + 1, target, query, child[i]);
-//                 }
-//             }
-            
-//             return cnt;
-//         }else{
-//             if(visited[curNum]){
-//                 if(depth + 1 >= target){
-//                     return child[curNum].cnt;
-//                 }
-                
-//                 return findNodeSuffix(depth + 1, target, query, child[curNum]);
-//             }            
-//         }
-//         
-        // return 0;
     }
     
     public static int findNode(int depth, int target, String query, Node node){
