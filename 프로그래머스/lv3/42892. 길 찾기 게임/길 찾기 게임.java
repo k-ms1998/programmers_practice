@@ -1,157 +1,125 @@
 import java.util.*;
 
-/**
-1. 루트 노드를 찾는다 (y좌표가 가장 큰 노드)
-2. 입력 받은 노드들을 x좌표 순으로 정렬 -> 트리를 중위 순회한 결과가 나옴
-3. 정렬한 노드들에서 루트 노드의 위치를 찾는다 -> 루트노드 기준 배열의 왼쪽에 있는 값들은 루트 노드 기준 왼쪽 서브 트리, 오른쪽은 오른쪽 서브트리
-4. 각 서브트리로 이동해서, 1~3 반복 -> 루트 노드에 도착할때까지 서브트리로 이동
-5. 현재 노드 출력 -> 왼쪽 서브트리 방문 -> 오른쪽 서브트리 방문 => 전위 순회
-   왼쪽 서브트리 방문 -> 오른쪽 서브트리 방문 -> 현재 노드 출력 => 전위 순회
-*/
 class Solution {
     
     static int n;
-    static Node[] inOrder;
-    static Node root;
-    static Node[] preOrder;
-    static Node[] postOrder;
-    static int preOrderIdx = -1;
-    static int postOrderIdx = -1;
-    static int[][] answer;
+    static Node[] nodes; // inOrder
+    static List<Node> preOrder = new ArrayList<>();
+    static List<Node> postOrder = new ArrayList<>();
 
-    static final int INF = 100001;
     
     public int[][] solution(int[][] nodeinfo) {
         n = nodeinfo.length;
-        inOrder = new Node[n + 1];
-
-        for(int i = 0; i < n; i++){
-            inOrder[i] = new Node(i + 1, nodeinfo[i][0], nodeinfo[i][1]);
-        }
-        inOrder[n] = new Node(0, -1, INF);
-        Arrays.sort(inOrder, new Comparator<Node>(){
-            @Override
-            public int compare(Node n1, Node n2){
-                if(n1.y == n2.y){
-                    return n1.x - n2.x;
-                }
-                return n2.y - n1.y;
-            }
-        });
-        root = inOrder[1];
         
-        Arrays.sort(inOrder, new Comparator<Node>(){
+        nodes = new Node[n];
+        Node root = new Node(-1, -1, -1);
+        for(int i = 0; i < n; i++){
+            nodes[i] = new Node(i + 1, nodeinfo[i][0], nodeinfo[i][1]);
+            if(root.y < nodeinfo[i][1]){
+                root = new Node(i + 1, nodeinfo[i][0], nodeinfo[i][1]);
+            }
+        }
+        Arrays.sort(nodes, new Comparator<Node>(){
             @Override
             public int compare(Node n1, Node n2){
                 return n1.x - n2.x;
             }
         });
+        // for(int i = 0; i < n; i++){
+        //     System.out.print(nodes[i] + " ");
+        // }
+        // System.out.println();
         
-        int rootPos = 0;
-        for(int i = 1; i < n + 1; i++){
-            if(inOrder[i].idx == root.idx){
-                rootPos = i;
+        for(int i = 0; i < n; i++){
+            if(nodes[i].num ==  root.num){
+                findPreOrder(0, n - 1, i, 1);
+                findPostOrder(0, n-1, i, 1);
                 break;
             }
         }
-                
-        answer = new int[2][n];
-        createPreOrder(rootPos, root, inOrder);
-        createPostOrder(rootPos, root, inOrder);
 
+        int[][] answer = new int[2][n];
+        for(int i = 0; i < n; i++){
+            Node pre = preOrder.get(i);
+            Node post = postOrder.get(i);
+            
+            answer[0][i] = pre.num;
+            answer[1][i] = post.num;
+        }
+        
         return answer;
     }
     
-    public static void createPreOrder(int rootPos, Node root, Node[] tmp){
-        if(rootPos == -1){
+    public static void findPreOrder(int left, int right, int mid, int idx){
+        if(mid == -1){
             return;
         }
         
-        Node[] leftTree = new Node[n + 1];
-        Node[] rightTree = new Node[n + 1];
+        preOrder.add(nodes[mid]);
         Node leftRoot = new Node(-1, -1, -1);
         Node rightRoot = new Node(-1, -1, -1);
-        int leftRootPos = -1;
-        int rightRootPos = -1;
+        int leftIdx = -1;
+        int rightIdx = -1;
         
-        Arrays.fill(leftTree, new Node(-1, -1, -1));
-        Arrays.fill(rightTree, new Node(-1, -1, -1));
-        for(int i = 1; i <= n; i++){
-            if(i < rootPos){
-               leftTree[i] = tmp[i];
-                if(tmp[i].y > leftRoot.y){
-                    leftRoot = tmp[i];
-                    leftRootPos = i;
-                }  
-            }else if(i == rootPos){
-                continue;
-            }else{
-                rightTree[i] = tmp[i]; 
-                if(tmp[i].y > rightRoot.y){
-                    rightRoot = tmp[i];
-                    rightRootPos = i;
-                }
+        for(int i = left; i < mid; i++){
+            if(nodes[i].y > leftRoot.y){
+                leftRoot = nodes[i];
+                leftIdx = i;
             }
         }
-                        
-        preOrderIdx++;
-        answer[0][preOrderIdx] = root.idx;
-        createPreOrder(leftRootPos, leftRoot, leftTree); 
-        createPreOrder(rightRootPos, rightRoot, rightTree);
+        for(int i = mid + 1; i <= right; i++){
+            if(nodes[i].y > rightRoot.y){
+                rightRoot = nodes[i];
+                rightIdx = i;
+            }
+        }
+        
+        findPreOrder(left, mid - 1, leftIdx, idx);
+        findPreOrder(mid + 1, right, rightIdx, idx);
     }
     
-    public static void createPostOrder(int rootPos, Node root, Node[] tmp){
-        if(rootPos == -1){
+    public static void findPostOrder(int left, int right, int mid, int idx){
+        if(mid == -1){
             return;
         }
         
-        Node[] leftTree = new Node[n + 1];
-        Node[] rightTree = new Node[n + 1];
         Node leftRoot = new Node(-1, -1, -1);
         Node rightRoot = new Node(-1, -1, -1);
-        int leftRootPos = -1;
-        int rightRootPos = -1;
+        int leftIdx = -1;
+        int rightIdx = -1;
         
-        Arrays.fill(leftTree, new Node(-1, -1, -1));
-        Arrays.fill(rightTree, new Node(-1, -1, -1));
-        for(int i = 1; i <= n; i++){
-            if(i < rootPos){
-               leftTree[i] = tmp[i];
-                if(tmp[i].y > leftRoot.y){
-                    leftRoot = tmp[i];
-                    leftRootPos = i;
-                }  
-            }else if(i == rootPos){
-                continue;
-            }else{
-                rightTree[i] = tmp[i]; 
-                if(tmp[i].y > rightRoot.y){
-                    rightRoot = tmp[i];
-                    rightRootPos = i;
-                }
+        for(int i = left; i < mid; i++){
+            if(nodes[i].y > leftRoot.y){
+                leftRoot = nodes[i];
+                leftIdx = i;
+            }
+        }
+        for(int i = mid + 1; i <= right; i++){
+            if(nodes[i].y > rightRoot.y){
+                rightRoot = nodes[i];
+                rightIdx = i;
             }
         }
         
-        createPostOrder(leftRootPos, leftRoot, leftTree); 
-        createPostOrder(rightRootPos, rightRoot, rightTree);
-        postOrderIdx++;
-        answer[1][postOrderIdx] = root.idx;
+        findPostOrder(left, mid - 1, leftIdx, idx);   
+        findPostOrder(mid + 1, right, rightIdx, idx);
+        postOrder.add(nodes[mid]);
     }
-
+    
     public static class Node{
-        int idx;
+        int num;
         int x;
         int y;
         
-        public Node(int idx, int x, int y){
-            this.idx = idx;
+        public Node(int num, int x, int y){
+            this.num = num;
             this.x = x;
             this.y = y;
         }
         
         @Override
         public String toString(){
-            return "[idx:" + idx + ", {x=" + x + ", y=" + y + "}]";
+            return "[num=" + num + ", x=" + x + ", y=" + y + "}";
         }
     }
 }
