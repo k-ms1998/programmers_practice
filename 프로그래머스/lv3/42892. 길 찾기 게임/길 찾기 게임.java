@@ -1,5 +1,16 @@
 import java.util.*;
 
+/**
+1. 중위순회 트리 만들기
+-> 중위순회 특징: x좌표가 가장 작은 순서대로 차례로 노드를 트리에 추가하면 됨
+
+2. 만든 중위순회 트리에 대해서 전위순회(preOrder) 트리 만들기
+-> 현재 노드 추가 -> 왼쪽으로 이동 -> 오른쪽으로 이동
+
+3. 만든 중위순회 트리에 대해서 후위순회(postOrder) 트리 만들기
+-> 왼쪽으로 이동 -> 오른쪽으로 이동 -> 현재 노드 추가
+
+*/
 class Solution {
     
     static int n;
@@ -25,11 +36,7 @@ class Solution {
                 return n1.x - n2.x;
             }
         });
-        // for(int i = 0; i < n; i++){
-        //     System.out.print(nodes[i] + " ");
-        // }
-        // System.out.println();
-        
+
         for(int i = 0; i < n; i++){
             if(nodes[i].num ==  root.num){
                 findPreOrder(0, n - 1, i, 1);
@@ -50,36 +57,36 @@ class Solution {
         return answer;
     }
     
-    public static void findPreOrder(int left, int right, int mid, int idx){
-        if(mid == -1){
+    public static void findPreOrder(int left, int right, int root, int idx){
+        if(root == -1){
             return;
         }
         
-        preOrder.add(nodes[mid]);
         Node leftRoot = new Node(-1, -1, -1);
         Node rightRoot = new Node(-1, -1, -1);
         int leftIdx = -1;
         int rightIdx = -1;
         
-        for(int i = left; i < mid; i++){
+        for(int i = left; i < root; i++){ // 왼쪽 서브트리의 루트 노드 찾기 -> 현재 루트 기준 배열에서 왼쪽에 있는 노드들 중, y값이 가장 큰 노드 = 루트 노드
             if(nodes[i].y > leftRoot.y){
                 leftRoot = nodes[i];
                 leftIdx = i;
             }
         }
-        for(int i = mid + 1; i <= right; i++){
+        for(int i = root + 1; i <= right; i++){ // 오른쪽 서브트리의 루트 노드 찾기 -> 현재 루트 기준 배열에서 오른쪽ㅇ0 있는 노드들 중, y값이 가장 큰 노드 = 루트 노드
             if(nodes[i].y > rightRoot.y){
                 rightRoot = nodes[i];
                 rightIdx = i;
             }
         }
         
-        findPreOrder(left, mid - 1, leftIdx, idx);
-        findPreOrder(mid + 1, right, rightIdx, idx);
+        preOrder.add(nodes[root]);
+        findPreOrder(left, root - 1, leftIdx, idx); // 왼쪽으로 이동
+        findPreOrder(root + 1, right, rightIdx, idx); // 오른쪽으로 이동
     }
     
-    public static void findPostOrder(int left, int right, int mid, int idx){
-        if(mid == -1){
+    public static void findPostOrder(int left, int right, int root, int idx){
+        if(root == -1){
             return;
         }
         
@@ -88,22 +95,22 @@ class Solution {
         int leftIdx = -1;
         int rightIdx = -1;
         
-        for(int i = left; i < mid; i++){
-            if(nodes[i].y > leftRoot.y){
+        for(int i = left; i < root; i++){ // 왼쪽 서브트리의 루트 노드 찾기 -> 현재 루트 기준 배열에서 왼쪽에 있는 노드들 중, y값이 가장 큰 노드 = 루트 노드
+            if(nodes[i].y > leftRoot.y){ // 오른쪽 서브트리의 루트 노드 찾기 -> 현재 루트 기준 배열에서 오른쪽ㅇ0 있는 노드들 중, y값이 가장 큰 노드 = 루트 노드
                 leftRoot = nodes[i];
                 leftIdx = i;
             }
         }
-        for(int i = mid + 1; i <= right; i++){
+        for(int i = root + 1; i <= right; i++){
             if(nodes[i].y > rightRoot.y){
                 rightRoot = nodes[i];
                 rightIdx = i;
             }
         }
         
-        findPostOrder(left, mid - 1, leftIdx, idx);   
-        findPostOrder(mid + 1, right, rightIdx, idx);
-        postOrder.add(nodes[mid]);
+        findPostOrder(left, root - 1, leftIdx, idx);    // 왼쪽으로 이동
+        findPostOrder(root + 1, right, rightIdx, idx); // 오른쪽으로 이동
+        postOrder.add(nodes[root]);
     }
     
     public static class Node{
