@@ -1,5 +1,9 @@
 import java.util.*;
 
+/**
+Solution: Union-Find
+(k가 최대 10^12 이기 때문에, 배열 사용 X -> Map 사용)
+*/
 class Solution {
     
     static int n;
@@ -19,13 +23,13 @@ class Solution {
     
     public static long findRoot(long num){
         long parent = root.getOrDefault(num, num);
-        if(parent == num){
-            root.put(num, parent + 1);
+        if(parent == num){ // parent == num 이면, 아직 해당 방에는 사람이 배정이 안된 상태
+            root.put(num, parent + 1); // 다음 칸으로 업데이트
             return num;
         }
         
-        long next = findRoot(parent);
-        root.put(num, next);
+        long next = findRoot(parent); 
+        root.put(num, next); // 지금까지 거친 경로를 업데이트
         return next;
     }
 }
