@@ -1,5 +1,16 @@
 import java.util.*;
 
+/**
+Solution: DFS + BitMasking
+1. 문제 조건에 따라서 각 캐릭터 카드는 1~6이며, 무조건 2장씩만 존재함
+-> 000000 = 1~6 모두 제거 안됐음, 111111 = 1~6 모두 제거 됐음, 000101 = 1,3 카드들 제거됨
+2. DFS로 카드번호 1~6에 대해서 모든 번호에 대한 카드를 순서대로 확인할 카드들의 조합 확인
+-> ex: (1,2,3,4,5,6) 순서로 확인하는 거랑, (2,1,3,4,5,6) 순서대로 확인하는 경우는 다름
+3. ex: (1,2,3,4,5,6) 순서로 확인할려고 하고, 카드 1의 좌표들이 (1,1), (1,3) 일때:
+    경우의 수 1: (r,c)->(1,1)->(1,3) 순서대로 확인하고, (1,3)에서 2번 카드들로 갈때
+    경우의 수 2: (r,c)->(1,3)->(1,1) 순서대로 확인하고, (1,1)에서 2번 카드들로 갈때
+4. 이렇게 모든 경우의 수를 확인해서 최소값 찾기
+*/
 class Solution {
     
     static int[] dx = {1, 0, -1, 0};
@@ -28,6 +39,10 @@ class Solution {
         return answer;
     }
     
+    /*
+    DFS
+    - cardFound = 1~6카드 중에서 현재까지 확인한 카드들
+    */
     public static void findAnswer(int[][] board, int r, int c, int cardsFound, int d){
         if(checkBoard(board)){
             answer = Math.min(answer, d);
@@ -36,6 +51,12 @@ class Solution {
         
         int[][] dist = new int[4][4];
         initDist(board, r, c, dist);
+        int[][] copyBoard = new int[4][4];
+        for(int y = 0; y < 4; y++){
+            for(int x = 0; x < 4; x++){
+                copyBoard[y][x] = board[y][x];
+            }
+        }
         
         for(int i = 1; i < 7; i++){
             if((cardsFound & (1 << i)) != (1 << i) && cards[i].size() == 2){
@@ -48,22 +69,21 @@ class Solution {
                 int[][] tmpDistB = new int[4][4];
                 findDistFromAtoB(board, b, a, tmpDistB);
                                 
-                int[][] copyBoard = new int[4][4];
-                for(int y = 0; y < 4; y++){
-                    for(int x = 0; x < 4; x++){
-                        copyBoard[y][x] = board[y][x];
-                    }
-                }
+                int numA = board[a.y][a.x];
+                int numB = board[b.y][b.x];
+                
                 copyBoard[a.y][a.x] = 0;
                 copyBoard[b.y][b.x] = 0;
                 int distAB = tmpDistA[b.y][b.x];
                 int distBA = tmpDistB[a.y][a.x];
 
-                
                 // a -> b
                 findAnswer(copyBoard, b.y, b.x, cardsFound | (1 << i), d + dist[a.y][a.x] + distAB + 2);
                 // b -> a
                 findAnswer(copyBoard, a.y, a.x, cardsFound | (1 << i), d + dist[b.y][b.x] + distBA + 2);
+                
+                copyBoard[a.y][a.x] = numA;
+                copyBoard[b.y][b.x] = numB;
             }
         }
     }
@@ -194,16 +214,6 @@ class Solution {
         }
     
         return true;
-    }
-    
-    public static void printBoard(int[][] board){
-        for(int y= 0; y < 4; y++){
-            for(int x = 0; x < 4; x++){
-                System.out.print(board[y][x] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println("----------");
     }
     
     public static boolean checkXY(int x, int y){
