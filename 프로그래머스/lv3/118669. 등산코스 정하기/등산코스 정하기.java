@@ -1,38 +1,31 @@
 import java.util.*;
 
-/*
-1. 각 출입구로 부터 산봉우리까지의 intensity 계산
-2. 출입구 -> 산봉우리의 intensity == 산봉우리 -> 출입구의 intensity => 그러므로, 각 게이트로 부터 출발해서 산봉우리까지의 가장 작은 intensity가 정답
-3. 시간 단축을 위해, 각 노드까지의 intensity를 toSummit에 저장
- -> 이때, 예시 1에서 처럼 1<->4는 3이고, 3<->4는 4이므로, 어느 게이트에서 출발하던, 4를 거치게 되면 1번 게이트에서 출발해야 intensity 최소화 가능
-*/
 class Solution {
     
-    static int N;
-    static List<Info>[] edges;
-    static boolean[] isSummit;
+    static List<Edge>[] edges;
     static boolean[] isGate;
-    static int[] toSummit;
-
-    static int ansCost = 100000000;
-    static int ansSummit = 0;
+    static boolean[] isSummit;
+    static int ansSummit = Integer.MAX_VALUE;
+    static int ansIntensity = Integer.MAX_VALUE;
     static final int INF = 100000000;
-    
+    static int[] dpTo;
+
     public int[] solution(int n, int[][] paths, int[] gates, int[] summits) {
-        N = n;
         edges = new List[n + 1];
-        for(int i = 1; i < n + 1; i++){
+        dpTo = new int[n + 1];
+        for(int i = 0; i < n + 1; i++){
             edges[i] = new ArrayList<>();
+        }
+        Arrays.fill(dpTo, INF);
+        
+        isGate = new boolean[n + 1];
+        for(int i = 0; i < gates.length; i++){
+            isGate[gates[i]] = true;
         }
         
         isSummit = new boolean[n + 1];
-        for(int i = 0; i < summits.length ;i++){
+        for(int i = 0; i < summits.length; i++){
             isSummit[summits[i]] = true;
-        }
-        
-        isGate = new boolean[n + 1];
-        for(int i = 0; i < gates.length ;i++){
-            isGate[gates[i]] = true;
         }
         
         for(int i = 0; i < paths.length; i++){
@@ -40,62 +33,58 @@ class Solution {
             int b = paths[i][1];
             int c = paths[i][2];
             
-            edges[a].add(new Info(b, c));
-            edges[b].add(new Info(a, c));
-        }
-
-        toSummit = new int[n + 1];
-        Arrays.fill(toSummit, INF);
-        for(int i = 0; i < gates.length; i++){
-            distToSummit(gates[i], gates[i], 0);
+            edges[a].add(new Edge(b, c));
+            edges[b].add(new Edge(a, c));
         }
         
-        int[] answer = new int[2];
-        answer[0] = ansSummit;
-        answer[1] = ansCost;
+        for(int i = 0; i < gates.length; i++){
+            findAnswerTo(gates[i], gates[i], 0);
+        }
+        
+        int[] answer = {ansSummit, ansIntensity};
         return answer;
     }
     
-    public static void distToSummit(int start, int node, int cost){
-        if(cost > ansCost){
+    public static void findAnswerTo(int start, int node, int intensity){
+        if(intensity > ansIntensity){
             return;
         }
-        // 산봉우리에 도착하면 탐색 멈춤
         if(isSummit[node]){
-            if(ansCost > cost){
-                ansCost = cost;
+            if(ansIntensity == intensity){
+                if(ansSummit > node){
+                    ansSummit = node;
+                }
+            }else if(ansIntensity > intensity){
+                ansIntensity = intensity;
                 ansSummit = node;
-                return;
             }
-            if(ansCost == cost){
-                ansSummit = Math.min(ansSummit, node);
-                return;
-            }
+            
             return;
         }
         
-        for(Info next : edges[node]){
-            int dst = next.dst;
-            int c = Math.max(cost, next.c);
-            if(c > ansCost){
+        for(Edge edge : edges[node]){
+            int next = edge.dst;
+            int cost = edge.cost;
+            
+            if(isGate[next]){
                 continue;
             }
             
-            // 현재 intensity(c)가 더 작고, 출입구가 아닌 경우에만 탐색
-            if(toSummit[dst] > c && !isGate[dst]){
-                toSummit[dst] = c;
-                distToSummit(start, dst, c);
+            int tmpIntensity = Math.max(intensity, cost);
+            if(dpTo[next] > tmpIntensity){
+                dpTo[next] = tmpIntensity;
+                findAnswerTo(start, next, tmpIntensity);
             }
         }
     }
     
-    public static class Info{
+    public static class Edge{
         int dst;
-        int c;
+        int cost;
         
-        public Info(int dst, int c){
+        public Edge(int dst, int cost){
             this.dst = dst;
-            this.c = c;
+            this.cost = cost;
         }
     }
 }
