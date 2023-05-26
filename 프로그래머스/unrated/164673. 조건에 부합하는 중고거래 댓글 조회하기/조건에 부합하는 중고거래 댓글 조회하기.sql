@@ -1,0 +1,1 @@
+SELECT a.title as "TITLE", a.BOARD_ID as "BOARD_ID", b.reply_id as "REPLY_ID", b.writer_id as "WRITER_ID", b.CONTENTS as "CONTENTS", DATE_FORMAT(b.created_date, "%Y-%m-%d") as "CREATED_DATE" from used_goods_reply b LEFT JOIN used_goods_board a ON a.board_id = b.board_id WHERE DATE_FORMAT(a.created_date, "%Y-%m") = "2022-10" ORDER BY b.created_date ASC, a.title ASC; 
