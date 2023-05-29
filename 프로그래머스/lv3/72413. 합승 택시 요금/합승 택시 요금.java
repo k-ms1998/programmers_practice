@@ -1,16 +1,20 @@
 import java.util.*;
 
+/**
+Solution: Floyd-Warshall
+1. 처음부터 각자 따로 택시 탑승
+2. S -> 중간 지점까지 합승 -> 중간 지점부터 도착 지점까지 각자 따로 택시 탑승
+
+1, 2중 가장 작은 값이 정답
+*/
 class Solution {
     
-    static List<Edge>[] edges;
     static int[][] dist;
     static final int INF = 100000000;
     
     public int solution(int n, int s, int a, int b, int[][] fares) {
-        edges = new List[n + 1];
         dist = new int[n + 1][n + 1];
         for(int i = 0; i < n + 1; i++){
-            edges[i] = new ArrayList<>();
             Arrays.fill(dist[i], INF);
         }
         
@@ -19,9 +23,6 @@ class Solution {
             int dst = fares[i][1];
             int cost = fares[i][2];
             
-            edges[src].add(new Edge(dst, cost));
-            edges[dst].add(new Edge(src, cost));
-            
             dist[src][dst] = cost;
             dist[dst][src] = cost;
             dist[src][src] = 0;
@@ -29,17 +30,16 @@ class Solution {
         }
         
         initDist(n);
-        int dist1 = dist[s][a] + dist[s][b];
-        int dist2 = INF;
+        
+        int answer = dist[s][a] + dist[s][b];
         for(int i = 1; i < n + 1; i++){
             if(i == s || dist[s][i] == INF){
                 continue;
             }
-            dist2 = Math.min(dist2, dist[s][i] + dist[i][a] + dist[i][b]);
+            answer = Math.min(answer, dist[s][i] + dist[i][a] + dist[i][b]);
         }
-        // System.out.println("dist1=" + dist1 + ", dist2=" + dist2);
         
-        return Math.min(dist1, dist2);
+        return answer;
     }
     
     public static void initDist(int n){
@@ -55,16 +55,6 @@ class Solution {
                     }
                 }
             }
-        }
-    }
-    
-    public static class Edge{
-        int dst;
-        int cost;
-        
-        public Edge(int dst, int cost){
-            this.dst = dst;
-            this.cost = cost;
         }
     }
 }
