@@ -1,5 +1,14 @@
 import java.util.*;
 
+/**
+Gate->Summit까지의 intensity와 Summit->Gate의 intensity는 같이 때문에 Gate->Summit만 확인
+각 Gate에서 출발해서, 도달 가능한 각 Summit까지의 intensity 구하기
+
+이때, 시간 단축을 위해 dp 사용
+dpTo[0] = 노드 0까지 도달하는데 필요한 최소한의 intensity
+만약에, 현재 x노드를 탐색중이고, 현재 intesnsity가 dpTo[x]보다 크면 탐색 멈춤
+-> dpTo[x]가 더 작으면, 노드 x를 거쳤을때 더 작은 intesnsity를 구할 수 없기 때문에
+*/
 class Solution {
     
     static List<Edge>[] edges;
