@@ -1,17 +1,29 @@
 import java.util.*;
 
+/**
+Solution: 누적합
+1. 각 logs에 대해서 시작시간과 끝나느 시간 사이의 count 증가
+2. 00:00:00~adv_time 까지의 누적합 구하기
+3. adv_time ~ play_time 까지 시간을 1씩 증가시키면서 누적합 업데이트
+    누적합 = 직전의 누적합 + count[end] - count[start-1]
+    => start~end의 누적합 = 직전의 누적합 - 직전의 누적합의 시작 지점의 count + 현재의 끝나는 지점의 count 
+4. 누적합이 업데이트 될때 최대값이 업데이트 되면, answer 갱신
+*/
 class Solution {
     
     static int n;
-    static Time[] times;
     static int playTime;
     static int advTime;        
-    static long[] count = new long[360001];
+    static long[] count;
 
     
     public String solution(String play_time, String adv_time, String[] logs) {
         n = logs.length;
-        times = new Time[n];
+                
+        playTime = convertTime(play_time);
+        advTime = convertTime(adv_time);
+        count = new long[playTime + 1];
+        
         for(int i = 0; i < n; i++){
             String[] arr = logs[i].split("-");
             
@@ -23,9 +35,6 @@ class Solution {
             }
         }
         
-        playTime = convertTime(play_time);
-        advTime = convertTime(adv_time);
-        
         int answer = 0;
         long curTime = 0L;
         for(int i = 0; i < advTime; i++){
@@ -33,17 +42,17 @@ class Solution {
         }
         long totalTime = curTime;
         
-        for(int i = 0; i <= playTime; i++){
-            int endTime = i + advTime;
+        for(int i = 1; i <= playTime; i++){
+            int endTime = i + advTime - 1;
             if(endTime > playTime){
                 break;
             }
         
-            curTime += count[endTime] - count[i];
+            curTime = (curTime + count[endTime]) - count[i - 1];
             
             if(curTime > totalTime){
-                curTime = totalTime;
-                answer = i + 1;
+                totalTime = curTime;
+                answer = i;
             }
         }
         
@@ -64,20 +73,5 @@ class Solution {
         String[] arr = str.split(":");
         
         return 3600 * Integer.parseInt(arr[0]) + 60 * Integer.parseInt(arr[1]) + Integer.parseInt(arr[2]);
-    }
-    
-    public static class Time{
-        int start;
-        int end;
-        
-        public Time(int start, int end){
-            this.start = start;
-            this.end = end;
-        }
-        
-        @Override
-        public String toString(){
-            return convertString(start) + "-" + convertString(end);
-        }
     }
 }
