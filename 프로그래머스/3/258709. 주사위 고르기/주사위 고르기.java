@@ -7,6 +7,13 @@ import java.util.*;
 3. 각각 가져간 주사위를 모두 굴린 뒤, 나온 수들을 모두 합해 점수를 계산 -> 점수가 더 큰 쪽이 우승, 같으면 무승부
 4. A가 승리할 확률이 가장 높도록 주사위를 가져가야함
     4-1. A가 주사위 n/2개를 가져갈 수 있는 모든 경우 조합 확인 (비트마스킹)
+    4-2. 자동으로 나머지 주사위가 B가 가져갈 수 있는 주사위 들
+    4-3. 각 주사위마다 만들 수 있는 숫자의 합 구해서 각각 리스트에 저장
+    4-4. A의 조합을 저장한 리스트의 각 원소랑 B의 조합을 저장한 리스트의 각 원소를 모두 비교해서 이기는 횟수 구하기
+        4-4-1. 이때, 시간 초과를 예방하기 위해 정렬 후 진행
+        4-4-2. 정렬 후, 현재 A의 원소가 B의 원소보다 작거나 같아지는 원소를 만나면 탐색 멈춤
+        4-4-3. 현재까지 확인한 B의 원소는 현재 A의 원소를 이길 수 있음 -> winCounter 업데이트
+        4-4-4. 다음 B의 원소를 확인할때 마지막으로 확인한 B의 원소부터 확인
 */
 class Solution {
     
@@ -59,8 +66,8 @@ class Solution {
             
             listA = new ArrayList<>();
             listB = new ArrayList<>();
-            permutationA(0, 0, bitA, bitB, dice);
-            permutationB(0, 0, bitA, bitB, dice, 0);
+            permutationA(0, 0, dice);
+            permutationB(0, 0, dice);
             Collections.sort(listA);
             Collections.sort(listB);
             int winCounter = 0;
@@ -96,29 +103,25 @@ class Solution {
         combination(sIdx, eIdx + 1, bitA, dice);
     }
     
-    public static void permutationA(int dIdx, int total, int bitA, int bitB, int[][] dice){
+    public static void permutationA(int dIdx, int total, int[][] dice){
         if(dIdx == n/2){
             listA.add(total);
-            // permutationB(0, 0, bitA, bitB, dice, total);
             return;
         }
         
         for(int i = 0; i < 6; i++){
-            permutationA(dIdx + 1, total + dice[selectedA[dIdx]][i], bitA, bitB, dice);
+            permutationA(dIdx + 1, total + dice[selectedA[dIdx]][i],  dice);
         }
     }
     
-    public static void permutationB(int dIdx, int totalB, int bitA, int bitB, int[][] dice, int totalA){
+    public static void permutationB(int dIdx, int totalB, int[][] dice){
         if(dIdx == n/2){
-            // if(totalB < totalA){
-            //     wins[bitA]++;
-            // }
             listB.add(totalB);
             return;
         }
         
         for(int i = 0; i < 6; i++){
-            permutationB(dIdx + 1, totalB + dice[selectedB[dIdx]][i], bitA, bitB, dice, totalA);
+            permutationB(dIdx + 1, totalB + dice[selectedB[dIdx]][i], dice);
         }
     }
 }
